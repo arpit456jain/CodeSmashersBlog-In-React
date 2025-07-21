@@ -1,7 +1,7 @@
 import config from "../config/config"
 import { Client, Account , Databases,ID,Storage,Query  } from 'appwrite';
 
-export class storageService{
+export class PostService{
     client = new Client();
     account;
     databases;
@@ -14,19 +14,20 @@ export class storageService{
         this.bucket = new Storage(this.client);
     }
 
-    async createPost({title,slug,content,featuredImg,status,userId}){
+    async createPost({title,slug,content,featuredImage,status,userId}){
+        console.log("in create post",title,slug,content,featuredImage,status,userId)
         try
         {
             return await this.databases.createDocument(
                         config.databaseId,
                         config.collectionId,
                         slug,
-                        { title,content,featuredImg,status,userId}
+                        { title,content,featuredImage,status,userId}
                     );
         }
         catch(error)
         {
-            console.log("error");
+            console.log(error);
         }
     }
 
@@ -141,10 +142,13 @@ export class storageService{
 
     getFilePreview(fileId)
     {
-        return this.bucket.getFilePreview(config.bucketId,fileId);
+        
+        const url = this.bucket.getFileView (config.bucketId,fileId)
+        console.log("file is ",fileId,url)
+        return url;
     }
 
 }
 
-const storageServiceObj = new storageService();
-export default storageServiceObj;
+const postServiceObj = new PostService();
+export default postServiceObj;

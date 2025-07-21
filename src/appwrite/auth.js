@@ -2,6 +2,7 @@ import config from "../config/config"
 import { Client, Account , ID} from 'appwrite';
 
 export class AuthService{
+    
     client = new Client();
     account;
     constructor(){
@@ -9,15 +10,18 @@ export class AuthService{
         this.client.setProject(config.projectId); // Replace with your project ID
 
         this.account = new Account(this.client)
+        console.log(config)
     }
     
     async createAccount({email,password,name})
     {
+        console.log("in auth.js",email,name,password)
         try{
             const userAccount = await this.account.create(ID.unique(),email,password,name);
+            console.log(userAccount)
             if(userAccount)
             {
-                this.login(email,password)
+                return  this.login({email,password})
             }
             else
             {
@@ -35,6 +39,7 @@ export class AuthService{
         try
         {
             return await this.account.createEmailPasswordSession(email, password);
+            
         }
         catch(error)
         {
@@ -50,7 +55,7 @@ export class AuthService{
         {
             throw error;
         }
-        return null;
+        
     }
     async logOut() {
         try{
@@ -60,7 +65,6 @@ export class AuthService{
         {
             throw error;
         }
-        return null;
     }
 
 }
